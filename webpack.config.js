@@ -9,11 +9,11 @@ module.exports = function (env) {
   const isProd = nodeEnv === 'production';
 
   const plugins = [
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendor',
-      minChunks: Infinity,
-      filename: 'vendor.bundle.js'
-    }),
+    //new webpack.optimize.CommonsChunkPlugin({
+    //   name: 'vendor',
+    //  minChunks: Infinity,
+    //  filename: 'vendor.bundle.js'
+    //}),
     new webpack.DefinePlugin({
       'process.env': { NODE_ENV: JSON.stringify(nodeEnv) }
     }),
