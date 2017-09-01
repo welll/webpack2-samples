@@ -1,12 +1,14 @@
 const webpack = require('webpack');
 const path = require('path');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
+
 
 const sourcePath = path.join(__dirname, './client');
 const staticsPath = path.join(__dirname, './static');
 
 module.exports = function (env) {
   const nodeEnv = env && env.prod ? 'production' : 'development';
-  const isProd = nodeEnv === 'production';
+  let isProd = nodeEnv === 'production';
 
   const plugins = [
     //new webpack.optimize.CommonsChunkPlugin({
@@ -18,7 +20,10 @@ module.exports = function (env) {
       'process.env': { NODE_ENV: JSON.stringify(nodeEnv) }
     }),
     new webpack.NamedModulesPlugin(),
+    new HtmlWebpackPlugin({filename: 'test.html'})
   ];
+  
+  isProd = false
 
   if (isProd) {
     plugins.push(
@@ -41,7 +46,7 @@ module.exports = function (env) {
         },
         output: {
           comments: false,
-        },
+        }
       })
     );
   }
@@ -77,7 +82,7 @@ module.exports = function (env) {
       ]
     },
     resolve: {
-      extensions: ['.js', '.jsx'],
+      extensions: [ '.js', '.jsx'],
       modules: [
         path.resolve(__dirname, 'node_modules'),
         sourcePath
@@ -95,7 +100,9 @@ module.exports = function (env) {
     stats: {
       colors: {
         green: '\u001b[32m',
-      }
+      },
+      maxModules: Infinity,
+      exclude: undefined
     }
 
   };
