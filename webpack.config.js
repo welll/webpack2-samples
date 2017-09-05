@@ -1,37 +1,21 @@
 const webpack = require('webpack');
 const path = require('path');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 
 const sourcePath = path.join(__dirname, './client');
 const staticsPath = path.join(__dirname, './static');
 
 module.exports = function (env) {
-  const nodeEnv = env && env.prod ? 'production' : 'development';
-  let isProd = nodeEnv === 'production';
 
   const plugins = [
-    //new webpack.optimize.CommonsChunkPlugin({
-    //   name: 'vendor',
-    //  minChunks: Infinity,
-    //  filename: 'vendor.bundle.js'
-    //}),
-    new webpack.DefinePlugin({
-      'process.env': { NODE_ENV: JSON.stringify(nodeEnv) }
+    new HtmlWebpackPlugin({filename: 'test.html'}),
+    new webpack.LoaderOptionsPlugin({
+      minimize: true,
+      debug: false
     }),
-    new webpack.NamedModulesPlugin(),
-    new HtmlWebpackPlugin({filename: 'test.html'})
-  ];
-  
-  isProd = false
-
-  if (isProd) {
-    plugins.push(
-      new webpack.LoaderOptionsPlugin({
-        minimize: true,
-        debug: false
-      }),
-      new webpack.optimize.UglifyJsPlugin({
+    new UglifyJSPlugin({
         compress: {
           warnings: false,
           screw_ie8: true,
@@ -44,19 +28,21 @@ module.exports = function (env) {
           if_return: true,
           join_vars: true,
         },
+        parallel: {
+	  cache: true,
+          workers: 2
+	},
         output: {
-          comments: false,
+          comments: false
         }
-      })
-    );
-  }
+    })
+  ]	
 
   return {
-    devtool: isProd ? 'source-map' : 'eval',
+    devtool: 'source-map',
     context: sourcePath,
     entry: {
       js: './index.js'
-      /*, vendor: ['']*/
     },
     output: {
       path: staticsPath,
@@ -65,19 +51,14 @@ module.exports = function (env) {
     module: {
       rules: [
         {
-          test: /\.css$/,
-          exclude: /node_modules/,
-          use: [
-            'style-loader',
-            'css-loader'
-          ]
-        },
-        {
           test: /\.(js|jsx)$/,
           exclude: /node_modules/,
-          use: [
-            'babel-loader'
-          ]
+          loader: 'babel-loader',
+	  options: { 
+            presets: [ 
+              [ 'es2015', { modules: false } ] 
+            ] 
+          }
         }
       ]
     },
@@ -91,7 +72,7 @@ module.exports = function (env) {
 
     plugins,
 
-    performance: isProd && {
+    performance: {
       maxAssetSize: 100,
       maxEntrypointSize: 300,
       hints: 'warning',
