@@ -1,33 +1,24 @@
 const webpack = require('webpack');
 const path = require('path');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
+
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 
-const sourcePath = path.join(__dirname, './client');
-const staticsPath = path.join(__dirname, './static');
+const sourcePath = path.join(__dirname, './src');
+const distPath = path.join(__dirname, './dist');
 
 module.exports = function (env) {
 
   const plugins = [
     new HtmlWebpackPlugin({filename: 'test.html'}),
-    new webpack.LoaderOptionsPlugin({
+ 
+   new webpack.LoaderOptionsPlugin({
       minimize: true,
       debug: false
     }),
+
     new UglifyJSPlugin({
-        compress: {
-          warnings: false,
-          screw_ie8: true,
-          conditionals: true,
-          unused: true,
-          comparisons: true,
-          sequences: true,
-          dead_code: true,
-          evaluate: true,
-          if_return: true,
-          join_vars: true,
-        },
         parallel: {
 	  cache: true,
           workers: 2
@@ -45,7 +36,7 @@ module.exports = function (env) {
       js: './index.js'
     },
     output: {
-      path: staticsPath,
+      path: distPath,
       filename: '[name].bundle.js',
     },
     module: {
